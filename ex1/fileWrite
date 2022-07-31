@@ -1,0 +1,63 @@
+package javaStudy.example;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
+public class ReadText1 {
+
+	public static void main(String[] args) {
+
+		try{
+			File file = new File("C:\\Users\\seong\\Desktop\\textWrite.txt");
+			BufferedWriter bufw = new BufferedWriter(new FileWriter(file));
+			
+			if(file.isFile() && file.canWrite()){
+				bufw.write("문자열 추가");
+				bufw.newLine();
+				
+				bufw.close();
+			}
+			
+		}catch(IOException e){
+			System.out.println(e);
+		}
+
+	}
+}
+------------------------------------------------------------------------------
+
+package javaStudy.example;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+
+public class ReadText1 {
+
+	public static void main(String[] args) throws IOException {
+
+		Path input = Paths.get("C:\\Users\\seong\\Desktop\\xml.txt");
+		
+		Path output = Paths.get("C:\\Users\\seong\\Desktop\\textWrite.txt");
+		
+		try(BufferedReader reader = Files.newBufferedReader(input,StandardCharsets.UTF_8);
+			BufferedWriter writer = Files.newBufferedWriter(output, StandardCharsets.UTF_8)){
+			
+			for(String line = reader.readLine(); line != null; line = reader.readLine()){
+				System.out.println(line);
+				writer.write(line);
+				writer.newLine();
+			}
+		}
+
+	}
+}

@@ -1,0 +1,34 @@
+package javaStudy.example;
+
+public class Thread1 implements Runnable {
+
+	private static final String MSG_TEMPLATE = "출력 중입니다.[%s][%d]";
+	
+	private final String threadName;
+	
+	public Thread1(String threadName){
+		this.threadName = threadName;
+	}
+	
+	public void run(){
+		for(int i = 1; i<100;i++){
+			System.out.println(String.format(MSG_TEMPLATE, threadName,i));
+		}
+	}
+	
+	public static void main(String[] args){
+		Thread1 runa1 = new Thread1("Thread1");
+		Thread1 runa2 = new Thread1("Thread2");
+		Thread1 runa3 = new Thread1("Thread3");
+		
+		Thread th1 = new Thread(runa1);
+		Thread th2 = new Thread(runa2);
+		Thread th3 = new Thread(runa3);
+		
+		th1.start();
+		th2.start();
+		th3.start();
+		
+	}
+	
+}

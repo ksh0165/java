@@ -1,3 +1,5 @@
+#예제 참고
+
 package javaStudy.example;
 
 public class Thread1 implements Runnable {
@@ -28,6 +30,54 @@ public class Thread1 implements Runnable {
 		th1.start();
 		th2.start();
 		th3.start();
+		
+	}
+	
+}
+######################################################################################################
+
+package javaStudy.example;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class Tread1 implements Runnable {
+
+	private static final String MSG_TEMPLATE = "출력 중입니다.[%s][%d]";
+	
+	private final String threadName;
+	
+	public Tread1(String treadName){
+		this.threadName = treadName;
+	}
+	
+	public void run(){
+		for(int i = 1; i<100;i++){
+			System.out.println(String.format(MSG_TEMPLATE, threadName,i));
+		}
+	}
+	
+	public static void main(String[] args){
+		Tread1 runa1 = new Tread1("Thread1");
+		Tread1 runa2 = new Tread1("Thread2");
+		Tread1 runa3 = new Tread1("Thread3");
+		
+		ExecutorService exec1 = Executors.newFixedThreadPool(3);
+		exec1.execute(runa1);
+		exec1.execute(runa2);
+		exec1.execute(runa3);
+		
+		exec1.shutdown();
+		
+		try{
+			if(!exec1.awaitTermination(5, TimeUnit.MINUTES)){
+				exec1.shutdown();
+			}
+		}catch(InterruptedException e){
+			e.printStackTrace();
+			exec1.shutdown();
+		}
 		
 	}
 	

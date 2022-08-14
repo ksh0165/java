@@ -1,0 +1,102 @@
+package javaStudy.example;
+import java.io.ByteArrayInputStream;import java.io.FileInputStream;import java.io.FileNotFoundException;import java.io.IOException;
+import java.io.InputStream;import java.io.StringBufferInputStream;import java.io.StringReader;import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;import javax.xml.parsers.SAXParser;import org.w3c.dom.Element;import org.w3c.dom.Node;import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;import org.w3c.dom.Document;import javax.xml.parsers.DocumentBuilder;import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+public class exeample1 {
+	static StringBuffer sb = new StringBuffer();
+	static List<String> list = new ArrayList<String>();
+	boolean nextCheck = true; // 다음엘리먼트가 잇는지
+	static boolean childCheck = true; // 자식노드가 있는지
+	
+	public static void main(String[] args) throws IOException{
+		Properties props = new Properties();
+		InputStream is = new FileInputStream("./src/config/config.properties");
+		try{
+			props.load(is);
+			String proStr = props.getProperty("mappingStr");
+			System.out.println(props.getProperty("mappingStr"));
+			System.out.println("charSet : "+Charset.defaultCharset());
+			showXmlStr(proStr);
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally {
+			if(is != null)is.close();
+		}
+	}
+	public static String showXmlStr(String str) throws ParserConfigurationException, SAXException, IOException{
+		String elementKey = ""; //현재 엘리먼트명
+		Element findElement = null;
+		InputStream is = null;
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+
+		Document doc = db.parse(new ByteArrayInputStream(str.getBytes()));
+		Element root = doc.getDocumentElement();
+		NodeList nl = (NodeList) root.getChildNodes();//.getChildNodes();
+//		System.out.println(" root : "+root.getNodeName());
+		if(root.getNextSibling() != null){System.out.println(" getNextSibling : "+root.getNextSibling().getNodeName());}
+		if(root.hasChildNodes()){System.out.println(" hasChildNodes : "+root.getChildNodes().item(0).getNodeName());}
+		if(root.getChildNodes().item(0) != null){System.out.println(" getChildNodes().item(0) : "+root.getChildNodes().item(0).getChildNodes().item(0).getNodeName());}
+//		System.out.println(" root.getNodeName : "+root.getNodeName());
+//		System.out.println(" root.getNodeName.getLength : "+root.getChildNodes().getLength());
+		sb.append("<"+root.getNodeName()+">");
+		elementKey = root.getNodeName();
+		
+		for(int i = 0; i<nl.getLength();i++){
+			System.out.println(" nl.item(0) : "+nl.item(i));
+			Node node = nl.item(i);
+			if(node.getNodeType() == Node.ELEMENT_NODE){
+				Element ele = (Element)node;
+				String nodeName = ele.getNodeName();
+				if(ele.hasChildNodes()){ //컬러즈
+					sb.append("<"+nodeName+">");
+					list.add("</"+nodeName+">");
+				}else{
+					sb.append("<"+nodeName+">"+ele.getTextContent()+"</"+nodeName+">");
+				}
+				
+				System.out.println(" ele.getChildNodes() : "+(Element)ele.getChildNodes().item(0));
+				hasNext(ele.getChildNodes()); // 자식엘리먼트 그리기
+				
+			}
+		}
+		for(int j=0;j<list.size();j++){
+			sb.append(list.get(j));
+		}
+		sb.append("</"+root.getNodeName()+">");
+		System.out.println(" sb : "+sb.toString());
+		return "";
+	}
+	
+	
+	public static void hasNext(NodeList nodeList){
+		System.out.println("nodeList.getLength() : "+nodeList.getLength());
+		for(int i = 0; i<nodeList.getLength();i++){
+			System.out.println(" nodeList.item(0) in hasNext : "+nodeList.item(i));
+			Node node = nodeList.item(i);
+			if(node.getNodeType() == Node.ELEMENT_NODE){
+				Element ele = (Element)node;
+				String nodeName = ele.getNodeName();
+				System.out.println(" ele.hasChildNodes() : "+ele.hasChildNodes());
+				if(ele.hasChildNodes()){ //컬러즈
+					sb.append("<"+nodeName+">"+ele.getTextContent()+"</"+nodeName+">");
+					
+//					sb.append("<"+nodeName+">");
+//					list.add("</"+nodeName+">");
+				}else{
+//					sb.append("<"+ele.getChildNodes().item(i).getNodeName()+">"+ele.getChildNodes().item(i).getNodeValue()+"</"+ele.getChildNodes().item(i).getNodeName()+">");
+				}
+				
+				System.out.println(" ele.getChildNodes() : "+ele.getChildNodes().item(0));
+				
+			}
+		}
+
+	}
+
+}

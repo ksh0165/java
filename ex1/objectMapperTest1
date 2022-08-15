@@ -1,0 +1,95 @@
+import java.io.FileInputStream;import java.io.IOException;import java.io.InputStream;
+import java.nio.charset.Charset;import java.util.Properties;
+import com.fasterxml.jackson.databind.ObjectMapper;
+public class jsonToObjectMapper1 {
+	
+	public static void main(String[] args) throws IOException{
+
+		Properties props = new Properties();
+		InputStream is = new FileInputStream("./src/config/config.properties");
+		try{
+			props.load(is);
+			String jsonStr = props.getProperty("jsonStr");
+			ObjectMapper objectMapper = new ObjectMapper();
+			mapperVo mv = objectMapper.readValue(jsonStr, mapperVo.class);
+			
+			System.out.println("mapperVo : "+mv.getMembers().get(0).getAge());
+			System.out.println("mapperVo : "+mv.getItems().toString());
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally {
+			if(is != null)is.close();
+		}
+	}
+}
+--------------------------------------------------------------------------
+
+jsonStr={"homeTown": "Metro City", "formed": 2016,"members" : [{ "name": "Molecule Man", "age": 29, "secretIdentity": "Dan Jukes" },{"name": "Madame Uppercut","age": 39, "secretIdentity": "Jane Wilson"}], "items":["apple","banana"]}
+
+-----------------------------------------------------------------------------------
+[vo]
+import java.util.List;
+
+public class mapperVo {
+	private String homeTown;
+	private String formed;
+	private List<membersVo> members;
+	private List items;
+	public String getHomeTown() {
+		return homeTown;
+	}
+	public void setHomeTown(String homeTown) {
+		this.homeTown = homeTown;
+	}
+	public String getFormed() {
+		return formed;
+	}
+	public void setFormed(String formed) {
+		this.formed = formed;
+	}
+	public List<membersVo> getMembers() {
+		return members;
+	}
+	public void setMembers(List<membersVo> members) {
+		this.members = members;
+	}
+	public List getItems() {
+		return items;
+	}
+	public void setItems(List items) {
+		this.items = items;
+	}
+	
+	
+}
+
+-----------------------------------------------------------------------------------
+
+[vo]
+
+
+public class membersVo {
+	private String name;
+	private String age;
+	private String secretIdentity;
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getAge() {
+		return age;
+	}
+	public void setAge(String age) {
+		this.age = age;
+	}
+	public String getSecretIdentity() {
+		return secretIdentity;
+	}
+	public void setSecretIdentity(String secretIdentity) {
+		this.secretIdentity = secretIdentity;
+	}
+	
+	
+}

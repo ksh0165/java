@@ -16,8 +16,8 @@ public class exeample1 {
 		InputStream is = new FileInputStream("./src/config/config.properties");
 		try{
 			props.load(is);
-			String proStr = props.getProperty("mappingStr");
-			System.out.println(props.getProperty("mappingStr"));
+			String proStr = props.getProperty("mappingStr1");
+			System.out.println(props.getProperty("mappingStr1"));
 			System.out.println("charSet : "+Charset.defaultCharset());
 			showXmlStr(proStr);
 		}catch(Exception e){
@@ -48,16 +48,17 @@ public class exeample1 {
 				String nodeName = ele.getNodeName();
 				if(ele.hasChildNodes()){ //컬러즈
 					sb.append("<"+nodeName+">");
-					list.add("</"+nodeName+">");
+//					list.add("</"+nodeName+">");
 					hasNext(ele.getChildNodes()); // 자식엘리먼트 그리기
+					sb.append("</"+nodeName+">");
 				}else{
 					sb.append("<"+nodeName+">"+ele.getTextContent()+"</"+nodeName+">");
 				}
 			}
 		}
-		for(int j=0;j<list.size();j++){
-			sb.append(list.get(j));
-		}
+//		for(int j=0;j<list.size();j++){
+//			sb.append(list.get(j));
+//		}
 		sb.append("</"+root.getNodeName()+">");
 		System.out.println(" sb : "+sb.toString());
 		return "";
@@ -69,16 +70,24 @@ public class exeample1 {
 		for(int i = 0; i<nodeList.getLength();i++){
 			System.out.println(" nodeList.item(0) in hasNext : "+nodeList.item(i));
 			Node node = nodeList.item(i);
-			if(node.getNodeType() == Node.ELEMENT_NODE){
+			if(node.getNodeType() == Node.ELEMENT_NODE){ 
 				Element ele = (Element)node;
 				String nodeName = ele.getNodeName();
-				System.out.println(" ele.hasChildNodes() : "+ele.hasChildNodes());
-				if(ele.hasChildNodes()){ //컬러즈
+				if(ele.hasChildNodes()){ //컬러즈 
+					if(!"NULL".equals(ele.getTextContent())){
+						sb.append("<"+nodeName+">");
+					}else{
+						sb.append("<"+nodeName+">");
+					}
+//					list.add("</"+nodeName+">");
+					hasNext(ele.getChildNodes()); // 자식엘리먼트 그리기
+					sb.append("</"+nodeName+">");
+				}else{
 					sb.append("<"+nodeName+">"+ele.getTextContent()+"</"+nodeName+">");
-				}				
+				}			
+			}else{
+				sb.append(node.getTextContent());
 			}
 		}
-
 	}
-
 }

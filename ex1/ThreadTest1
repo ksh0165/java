@@ -1,0 +1,45 @@
+# 참고 url : https://codechacha.com/ko/java-executors/
+
+package javaStudy.example;
+
+import java.time.LocalTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class TestThread1 {
+	public static void main(String[] args) throws InterruptedException{
+		ExecutorService executor = Executors.newFixedThreadPool(4);
+		
+		executor.submit(()->{
+			String thN = Thread.currentThread().getName();
+			System.out.println("Job : "+thN);
+		});
+		
+		executor.submit(()->{
+			String thN = Thread.currentThread().getName();
+			System.out.println("Job : "+thN);
+		});
+		
+		executor.submit(()->{
+			String thN = Thread.currentThread().getName();
+			System.out.println("Job : "+thN);
+		});
+		
+		executor.submit(()->{
+			String thN = Thread.currentThread().getName();
+			System.out.println("Job : "+thN);
+		});
+		
+		
+		executor.shutdown();
+		
+		if(executor.awaitTermination(20, TimeUnit.SECONDS)){
+			System.out.println(LocalTime.now()+" All jobs are terminate ");
+		}else{
+			System.out.println(LocalTime.now()+" some jobs are note terminate ");
+			executor.shutdownNow();
+		}
+		System.out.println("end");
+	}
+}

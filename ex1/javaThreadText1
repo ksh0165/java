@@ -1,0 +1,89 @@
+package javaStudy.example;
+
+import java.util.LinkedList;
+
+public class javaThreadTest {
+	static int count=0; 
+	public static void main(String[] args) throws InterruptedException{
+		
+		ThreadRunPackage trp11 = new ThreadRunPackage();
+		ThreadRunPackage trp22 = new ThreadRunPackage();
+		ThreadRunPackage trp33 = new ThreadRunPackage();
+		
+		Thread th1 = new Thread(trp11);
+		Thread th2 = new Thread(trp22);
+		Thread th3 = new Thread(trp33);
+		
+		th1.start();
+		th2.start();
+		th3.start();
+	}
+}
+
+class ThreadRunPackage implements Runnable{
+	
+	ConsumerProducerEx1 cp = new ConsumerProducerEx1();
+
+	public void run(){
+		try {
+		 queue add logic.. (Runable enable Object) ex-> getStr
+     
+     queue removeFirst logic
+     
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private static void getStr(){
+		System.out.println("11111");
+	}
+}
+
+
+	
+class ConsumerProducerEx1 {
+	//private LinkedList<Integer> list = new LinkedList<Integer>();
+	private LinkedList list = new LinkedList();
+	private final int LIMIT = 10;
+	private Object lock =new Object();
+	
+	public void produce(Runnable work) throws InterruptedException{
+		int count = 0;
+		boolean flag = true;
+		while(flag){
+			synchronized(lock){
+				while(list.size() == LIMIT){
+					lock.wait();
+				}
+				list.add(work);
+				System.out.println("list : "+ list.toString());
+				lock.notify();
+			}
+			count++;
+			if(count == LIMIT)flag = false;
+		}
+	}
+	
+	public void consume() throws InterruptedException{
+		int count = 0;
+		boolean flag = true;
+		while(flag){
+			synchronized(lock){
+				while(list.size() == 0){
+					lock.wait();
+				}
+				new Thread(new Runnable(){public void run(){ if(list.size() != 0) {Runnable rn1 = (Runnable) list.getFirst(); rn1.run();}}}).start();
+				System.out.println("list.getFirst end : "+ list.getFirst());
+				list.removeFirst();
+				lock.notify();
+			}
+			count++;
+			if(count == LIMIT)flag = false;
+		}
+	}
+
+}
+
+

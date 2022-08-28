@@ -1,0 +1,45 @@
+package javaStudy.example;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class ThreadIncrement implements Runnable {
+
+	public static int total = 0;
+	private Object lock =new Object();
+	public void run(){
+		synchronized(lock){
+			for(int i = 0; i<100;i++){
+				total++;
+			}
+			lock.notify();
+		}
+	}
+	
+	public static String getResult(){
+		return String.format("total = [%d]", total);
+	}
+	
+	public static void main(String[] args){
+		Runnable runab1 = new ThreadIncrement();
+		Runnable runab2 = new ThreadIncrement();
+		
+		ExecutorService es = Executors.newFixedThreadPool(2);
+		es.execute(runab1);
+		es.execute(runab2);
+		
+		es.shutdown();
+		
+		try{
+			if(es.awaitTermination(5, TimeUnit.MINUTES)){
+				es.shutdownNow();
+			}
+			
+		}catch(InterruptedException e){
+			e.printStackTrace();
+			es.shutdownNow();
+		}
+		System.out.println(getResult());
+	}
+}

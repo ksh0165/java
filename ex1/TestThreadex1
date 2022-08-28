@@ -1,0 +1,63 @@
+package javaStudy.example;
+
+import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+public class MThreadex2 {
+
+	public static void main(String[] args) throws NoSuchFieldException, SecurityException{
+		
+		TestVo vo = new TestVo();
+		List<Date> list = new ArrayList<Date>();
+
+		Calendar cal1 = Calendar.getInstance();
+		cal1.set(1989, Calendar.MARCH,10);
+		Date date1 = cal1.getTime();
+		vo.setDate(date1);
+		list.add(vo.getDate());
+		System.out.println("vo 1th : "+vo.getDate());
+		Calendar cal2 = Calendar.getInstance();
+		cal2.set(2020, Calendar.JUNE,20);
+		Date date2 = cal2.getTime();
+		vo.setDate(date2);
+		list.add(vo.getDate());
+		System.out.println("vo 2th : "+vo.getDate());
+		Calendar cal3 = Calendar.getInstance();
+		cal3.set(2022, Calendar.JUNE,15);
+		Date date3 = cal3.getTime();
+		vo.setDate(date3);
+		list.add(vo.getDate());
+		System.out.println("vo 3th : "+vo.getDate());
+
+		ThreadE[] te = new ThreadE[3];
+
+		for(int i = 0; i<3; i++){
+			te[i] = new ThreadE();
+			te[i].ThreadTest(list.get(i));
+		}
+	}
+}
+
+class ThreadE {
+
+	public void ThreadTest(Date date){
+
+		new Thread(()->{
+			DateFormat safeDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+			 for(int i=0; i< 10; i++){
+				 try{
+					 String result = safeDateFormat.format(date);
+					 System.out.println(" thread : "+result);
+				 }catch(Exception e){
+					 e.printStackTrace();
+					 break;
+				 }
+			 }
+		}).start();
+	}
+}

@@ -1,0 +1,38 @@
+package javaStudy.example;
+
+public class quick_sort1 {
+	public static void main(String[] args){
+		int[] a = {5,9,1,7,3};
+		quick_sort(a,0,4);
+	}
+	
+	public static void quick_sort(int[] array, int lower, int upper){
+		int tmp;
+		int mid = (upper + lower)/2;
+		System.out.println("mid : "+mid);
+		int pivot = array[mid];
+		System.out.println("pivot : "+pivot);
+		int tlower = lower;
+		System.out.println("tlower : "+tlower);
+		int tupper = upper;
+		System.out.println("tupper : "+tupper);
+		
+		while(tlower <= tupper){
+			while(array[tlower]<pivot){tlower++;}
+			while(array[tupper]>pivot){tupper--;}
+			if(tlower <= tupper){
+				tmp = array[tlower];
+				array[tlower] = array[tupper];
+				array[tupper] = tmp;
+				tupper--;
+				tlower++;
+			}
+		}
+		if(lower < tupper){quick_sort(array, lower, tupper);}
+		if(tlower < upper){quick_sort(array, tlower, upper);}
+		
+		for(int i=0;i<array.length;i++){
+			System.out.println(i+" array : "+array[i]);
+		}
+	}
+}

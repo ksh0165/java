@@ -1,0 +1,53 @@
+package javaStudy.example;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+public class MThread1 implements Runnable {
+	private static final String MSG_TEMPLATE = "출력 중입니다.[%s][%d회째]";
+	private final String threadName;
+	public MThread1(String threadName){
+		this.threadName = threadName;
+	}
+	
+	public void run(){
+		for(int i = 1; i< 100; i++){
+			System.out.println(String.format(MSG_TEMPLATE, threadName,i));
+		}
+	}
+	
+	public static void main(String[] args){
+		MThread1 r1 = new MThread1("S1");
+		MThread1 r2 = new MThread1("S2");
+		MThread1 r3 = new MThread1("S3");
+		
+		ExecutorService executorService = Executors.newFixedThreadPool(2);
+		
+		executorService.execute(r1);
+		executorService.execute(r2);
+		executorService.execute(r3);
+		
+		executorService.shutdown();
+		
+		try{
+			if(!executorService.awaitTermination(5, TimeUnit.MINUTES)){
+				executorService.shutdownNow();
+			}
+		}catch(InterruptedException e){
+			e.printStackTrace();
+			executorService.shutdownNow();
+		}
+		
+		/*
+		Thread thread1 = new Thread(r1);
+		Thread thread2 = new Thread(r2);
+		Thread thread3 = new Thread(r3);
+		
+		thread1.start();
+		thread2.start();
+		thread3.start();
+		*/
+	}
+
+}

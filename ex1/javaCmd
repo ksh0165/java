@@ -1,0 +1,40 @@
+# 참고 : https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=devch&logNo=220858848877
+
+package javaStudy.example;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+
+public class cmdTest {
+	
+	public static void main(String[] args){
+		String[] cmd = new String[]{"C:\\Windows\\System32\\ping.exe -n 5 127.0.0.1"};
+		try{
+			ProcessBuilder b = new ProcessBuilder("cmd");
+			b.redirectErrorStream(true);
+			Process p = b.start();
+			
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+			
+				for(String s : cmd){
+					writer.write(s+"\n");
+					writer.flush();
+				}
+				
+				writer.write("exit"+"\n");
+				writer.flush();
+				
+				BufferedReader std = new BufferedReader(new InputStreamReader(p.getInputStream(),"MS949"));
+				
+				String outputLine = "";
+				String outputMessage = "";
+				while((outputLine = std.readLine())!= null){
+					outputMessage += outputLine+"\r\n";
+				}
+				p.waitFor();
+				System.out.println(outputMessage);
+		}catch(Exception e){e.printStackTrace();}
+	}
+}

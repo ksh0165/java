@@ -1,0 +1,233 @@
+#참고 : https://velog.io/@vgo_dongv/Java-File%EA%B3%BC-Map%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%A0%84%ED%99%94%EB%B2%88%ED%98%B8%EB%B6%80-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8
+
+package javaStudy.example;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class TelBook {
+	Scanner sc = new Scanner(System.in);
+	
+	private HashMap<String, Phone> pbookMap;
+	
+	private String fileName = "C:\\Users\\seong\\Desktop\\pbook.txt";
+	private String name;
+	private String addr;
+	private String tel;
+	private boolean dataChange;
+	
+	public TelBook(){
+		
+		pbookMap = load();
+		if(pbookMap==null){
+			pbookMap = new HashMap<>();
+		}
+	}
+	
+	public static void main(String[] args){
+		TelBook b = new TelBook();
+		b.start();
+	}
+	
+	public void start(){
+		while(true){
+			System.out.println(" -----------");
+			System.out.println("메뉴를 선택하세요 ");
+			System.out.println(" -----------");
+			System.out.println("1. 전화번호 등록");
+			System.out.println("2. 전화번호 수정");
+			System.out.println("3. 전화번호 삭제");
+			System.out.println("4. 전화번호 검색");
+			System.out.println("5. 전화번호 전체출력");
+			System.out.println("6. 전화번호 저장");
+			System.out.println("0. 프로그램 종료");
+			int input = sc.nextInt();
+			sc.nextLine();
+			
+			if(0>input||input>6)break;
+			
+			switch(input){
+			case 1: add(); break;
+			case 2: edit(); break;
+			case 3: delete(); break;
+			case 4: search(); break;
+			case 5: print(); break;
+			case 6: save(); break;
+			case 0: 
+				if(dataChange==true){
+					System.out.println("변경된 데이터를 저장합니다.");
+					save();
+				}
+				return;
+			}
+		}
+	}
+	
+	private void save(){
+		ObjectOutputStream oos = null;
+		try{
+			oos = new ObjectOutputStream(new FileOutputStream(fileName));
+			oos.writeObject(pbookMap);
+			System.out.println("저장이 완료되었습니다.");
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			if(oos!=null){try{oos.close();}catch(IOException e){e.printStackTrace();}}
+		}
+		dataChange = false;
+	}
+	
+	private HashMap<String,Phone> load(){
+		HashMap<String, Phone> phMap = null;
+		
+		File file = new File(fileName);
+		if(!file.exists()){
+			return null;
+		}
+		
+		ObjectInputStream ois = null;
+		try{
+			ois = new ObjectInputStream(new FileInputStream(file));
+			phMap = (HashMap<String, Phone>)ois.readObject();
+			System.out.println("phMap : "+phMap.toString());
+		}catch(IOException e){return null;}
+		catch(ClassNotFoundException e){return null;}
+		finally{
+			if(ois!=null){try{ois.close();}catch(IOException e){}}
+		}
+		return phMap;
+	}
+	
+	public void add(){
+		System.out.println("이름>");
+		name=sc.nextLine();
+		if(pbookMap.size()!=0 && pbookMap.containsKey(name)==true){
+			System.out.println("중복되는 이름이 있습니다.");
+			add();
+		}
+		
+		System.out.println("전화번호>");
+		tel=sc.nextLine();
+		
+		System.out.println("주소>");
+		addr=sc.nextLine();
+		
+		pbookMap.put(name,new Phone(name,addr,tel));
+		System.out.println("등록이 완료되었습니다."+pbookMap.get(name));
+		System.out.println();
+		dataChange = true;
+	}
+	
+	private void edit(){
+		System.out.println("수정할 사람의 이름을 입력:");
+		name = sc.nextLine();
+		
+		if(pbookMap.size()!=0 && pbookMap.containsKey(name)==false){
+			System.out.println("수정할 사람이 업습니다");
+			edit();
+		}
+		
+		System.out.println("변경할 주소 : ");
+		addr=sc.nextLine();
+		System.out.println("변경할 번호: ");
+		tel=sc.nextLine();
+		
+		pbookMap.put(name, new Phone(name,addr,tel));
+		dataChange=true;
+		System.out.println("변경된 데이터를 반영해 주세요."+pbookMap.get(name)+" | "+pbookMap.toString());
+	}
+	
+	private void delete(){
+		System.out.println("삭제할 사람 전화번호의 이름을 입력: ");
+		name=sc.nextLine();
+		
+		if(pbookMap.size()!=0 && pbookMap.containsKey(name)==false){
+			System.out.println("검색되지 않습니다.");
+			return;
+		}
+		
+		pbookMap.remove(name);
+		System.out.println("삭제 완료, 반영해 주세요");
+		
+		for(String key : pbookMap.keySet()){
+			Phone value = pbookMap.get(key);
+			System.out.println(key + " : "+value);
+		}
+		dataChange = true;
+	}
+	
+	private void search(){
+		System.out.println(" 검색할 사람의 이름을 입력 :");
+		name=sc.nextLine();
+		if(pbookMap.size()!=0 && pbookMap.containsKey(name)==false){
+			System.out.println("검색되지 않습니다.");
+			return;
+		}
+		
+		Phone p = pbookMap.get(name);
+		System.out.println("이름: "+p.getName());
+		System.out.println("주소: "+p.getAddr());
+		System.out.println("번호: "+p.getTel());
+	}
+	
+	private void print(){
+		if(pbookMap.size()==0){
+			System.out.println("등록된 정보가 없습니다.");
+		}
+		for(String key : pbookMap.keySet()){
+			Phone value = pbookMap.get(key);
+			System.out.println(key +" : "+value);
+		}
+	}
+}
+
+class Phone implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	private String name;
+	private String addr;
+	private String tel;
+	
+	public Phone(String name, String addr, String tel){
+		super();
+		this.name = name;
+		this.addr = addr;
+		this.tel = tel;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAddr() {
+		return addr;
+	}
+
+	public void setAddr(String addr) {
+		this.addr = addr;
+	}
+
+	public String getTel() {
+		return tel;
+	}
+
+	public void setTel(String tel) {
+		this.tel = tel;
+	}
+
+	public String toString(){
+		return "[이름=" + name + ", 주소=" + addr + ", tel=" + tel + "]";
+	}		
+}

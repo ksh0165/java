@@ -1,0 +1,42 @@
+package javaStudy.example;
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class testMapper {
+
+	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException{
+		String jsonStr = "{"
+				+ "\"header\":{ "
+				+ " \"resultCd\":\"200\","
+				+ " \"resultMessage\":\"정상\""
+				+ "}}";
+		
+//		ObjectMapper objectMapper = new ObjectMapper();
+//		JsonHeader mv = objectMapper.readValue(jsonStr, JsonHeader.class);
+//		
+//		System.out.println(mv.getHeader().getResultCd());
+//		System.out.println(mv.getHeader().getResultMessage());
+		
+//		String cd = jsonStr.substring(jsonStr.indexOf("resultCd\":")+10, jsonStr.indexOf(","));
+//		((\"name\"\:)\"(가-힣+)\")
+		
+//		Pattern pattern = Pattern.compile("[\"resultCd\":]\"[^0-9]*\"");
+		Pattern pattern = Pattern.compile("[resultCd]?(?:)[0-9]{3}");
+		Matcher cd = pattern.matcher(jsonStr);
+		System.out.println(cd.matches());
+		System.out.println(cd.find());
+		System.out.println(cd.group());
+		
+		Pattern pattern1 = Pattern.compile("[resultMessage]?(?:)[가-힣]+");
+		Matcher cd1 = pattern1.matcher(jsonStr);
+		System.out.println(cd1.find());
+		System.out.println(cd1.group());
+
+	}
+}

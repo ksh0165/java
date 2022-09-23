@@ -1,0 +1,14 @@
+package javaStudy.example;
+
+public class Test2 {
+	public static void main(String[] args){
+		int[] a = {3,5,7,9,10};
+
+		int i;
+		for(i=0;i<a.length;i++){
+			if(a[i]==10)
+				break;
+		}
+		System.out.println(" 찾는 값 : "+i+"번째 : "+a[i]);
+	}
+}

@@ -1,0 +1,54 @@
+package javaStudy.example;
+
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+public class Test1 {
+	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException{
+		String jsonStr = "{"
+				+ "\"body\":{ "
+				+ " \"rsltCd\":\"200\","
+				+ " \"data\" : [{ \"one\":\"1\","
+				+ " \"two\":\"2\"},{\"one\":\"a\",\"two\":\"b\"}],"
+				+ " \"rsltCntt\":\"정상\""
+				+ "}}";
+		//1. }  rsltCntt
+		//2. ,  rsltCd
+		//3. ,  data
+		
+		System.out.println("getStr rsltCntt : "+getStr(jsonStr.substring(jsonStr.indexOf("rsltCntt")+"rsltCntt".length()),"}"));
+		System.out.println("getStr rsltCd : "+getStr(jsonStr.substring(jsonStr.indexOf("rsltCd")+"rsltCd".length()),","));
+		System.out.println("getStr data : "+getStr(jsonStr.substring(jsonStr.indexOf("data")+"data".length()),","));
+	}
+	
+	protected static String getStr(String str,String findStr){
+		String result = "";
+		if(str.indexOf("[")>-1){
+			int length = str.indexOf("[");
+			if(length > 10){
+				for(int i=0; i< str.length(); i++){
+//					System.out.println(" 찾을문자 findStr : "+findStr);
+//					System.out.println(" 시작 문자 str.charAt(i) : "+str.charAt(i));
+					if(findStr.charAt(0) == str.charAt(i)){
+						break;
+					}else{
+						if(' ' == str.charAt(i)||0 == str.charAt(i)){
+	
+						}else{
+//							System.out.println(" 담길 문자 str.charAt(i) : "+str.charAt(i));
+							result += str.charAt(i);
+						}
+					}
+				}
+				result = result.replaceAll("\"","").replace(":","").trim();
+			}else{
+				result = str.substring(0,str.lastIndexOf(findStr)).replace(":","").replaceFirst("\"","").trim();
+			}
+		}else{
+			result = str.substring(0,str.indexOf(findStr)).replaceAll("\"","").replace(":","").trim();
+		}
+		return result;
+	}
+}

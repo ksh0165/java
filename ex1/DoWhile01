@@ -18,3 +18,20 @@ public static String returnStr(String str, String regex){
  }while(compareStr != str.charAt(i));
  return resultStr;
 }
+
+
+# if reverse for and paser
+int flag = 0;
+if(str.indexOf("[") > -1 && str.indexOf("[") < 5) flag = 1;
+if(flag == 1){
+ int strSize = str.length();
+ for(int j = strSize-1; j >= 0; j--){
+   if(compareStr == str.charAt(j)){
+     resultStr = str.substring(0,j);
+     break;
+   }
+}
+}else{
+ do{}while(...);
+}
+return resultStr;

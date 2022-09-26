@@ -1,0 +1,20 @@
+# main method contents
+String textStr = "...";
+
+System.out.println( "rsltCd : " + returnStr(textStr.substring(textStr.indexOf("rsltCd")+"rsltCd".length()),"}"));
+
+# another method
+public static String returnStr(String str, String regex){
+ char compareStr = regex.charAt(0);
+ String resultStr = "";
+ int i =-1;
+
+ do{
+  i++;
+  if(Character.isLetter(str.charAt(i)||Character.isDigit(str.charAt(i)))
+  {
+    resultStr += str.charAt(i);
+  }
+ }while(compareStr != str.charAt(i));
+ return resultStr;
+}

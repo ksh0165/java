@@ -42,7 +42,7 @@ public class Test3 {
 			}
 		}
 
-                result = Arrays.stram(a).filter(m -> m!=0).toArray());
+                result = Arrays.stram(result).filter(m -> m!=0).toArray());
 		System.out.println("최종 result : "+ Arrays.toString(result));
 		
 		System.out.println(" 전체 배열 크기 : "+ result.length);

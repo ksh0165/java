@@ -1,0 +1,57 @@
+<html>
+<head>
+<script>
+function fTransformer()
+{
+ var form = document.form;
+ var bf_source = form.bf_source.value;
+ var af_source = '';
+
+ var bf_source_split[i] = trim(bf_source_split[i]);
+
+ var nColCnt = 0;
+ var sTemp = '';
+ var token = '';
+ var arrColumnStr;
+
+ for(var i = 0; i < bf_source_split.length; i++){
+  token = bf_source_split[i].substr(0,2);
+  if(token == '<₩₩/'){
+   continue;
+  }else{
+    sTemp += bf_source_split[i] + '₩n';
+    nColCnt++;
+  }
+ }
+
+ var arrColumnStr = sTemp.split('₩₩₩n');
+ form.af_source.value = arrColumnStr;
+}
+function trim(str){
+ str = str.replace(/(^₩s*)|(₩s*$)/g,'');
+ return str;
+}
+</script>
+</head>
+<body>
+<form name="">
+<table border=1>
+<tr>
+<td>변환전</td>
+</tr>
+<tr>
+<td><textarea name="bf_source" rows="20" cols="100"></textarea></td>
+</tr>
+<tr>
+<td>변환후</td>
+</tr>
+<tr>
+<td><textarea name="af_source" rows="20" cols="100"></textarea></td>
+</tr>
+</table>
+</form>
+<input type="button" value="소스변환" onClick="fTransformer()"/>
+</body>
+</html>
+
+<>

@@ -1,0 +1,51 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class twoCharTest {
+	
+	public static void main(String[] args){
+		
+		// 카테고리1 카테고리2 카테고리3 카테고리4 카테고리5 카테고리6 카테고리7 카테고리8
+		String[][] str = new String[8][2];
+		str[0][0] = "10";
+		str[0][1] = "카테고리1";
+		str[1][0] = "30";
+		str[1][1] = "카테고리2";
+		str[2][0] = "50";
+		str[2][1] = "카테고리3";
+		str[3][0] = "55";
+		str[3][1] = "카테고리4";
+		str[4][0] = "35";
+		str[4][1] = "카테고리5";
+		str[5][0] = "25";
+		str[5][1] = "카테고리6";
+		str[6][0] = "15";
+		str[6][1] = "카테고리7";
+		
+		String[] order = {"카테고리1","카테고리2","카테고리3","카테고리4","카테고리5","카테고리6","카테고리7","카테고리8"};
+		
+		String[][] resArr = new String[8][2];
+		for(int i = 0; i < order.length; i++){
+			int res = findIndex(str,order[i].toString());
+			if(res == 9){
+				resArr[i][0] = "0";
+				resArr[i][1] = order[i];
+			}else{
+				resArr[i] = str[res];
+			}
+		}
+		System.out.println("resArr : "+resArr.toString());
+	}
+	public static int findIndex(String[][] arr,String str){
+		int val= 9;
+		for(int i = 0; i < arr.length; i++){
+			if(null != arr[i][1] && arr[i][1].toString() == str){
+				val = i;
+				break;
+			}
+		}
+		return val;
+	}
+}

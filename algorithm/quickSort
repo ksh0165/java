@@ -1,0 +1,159 @@
+package com.example.fileCopy2;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.concurrent.TimeUnit;
+
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.scope.context.ChunkContext;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import com.example.fileCopy2.common.Constants;
+import com.example.fileCopy2.common.util.DebugSubscriber;
+import com.example.fileCopy2.common.util.HeapSort;
+import com.example.fileCopy2.common.util.HeapSort2;
+
+import io.reactivex.rxjava3.core.BackpressureStrategy;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subscribers.DisposableSubscriber;
+import io.reactivex.rxjava3.subscribers.ResourceSubscriber;
+
+@EnableBatchProcessing
+@SpringBootApplication
+public class FileCopy2Application {
+
+	private final Constants constants;
+
+	@Autowired
+	private JobBuilderFactory jobBuilderFactory;
+
+	@Autowired
+	private StepBuilderFactory stepBuilderFactory;
+
+	FileCopy2Application(Constants constants) {
+		this.constants = constants;
+	}
+	
+	/*
+	 * 부분 리스트는 arr 배열의 left ~ right 까지이다.
+	 * 
+	 * arr 정렬할 배열
+	 * left 배열의 시작점
+	 * mid 배열의 중간점
+	 * right 배열의 끝 점
+	 */
+	void print(int arr[], int left, int right, int pivot) {
+		for(int i = 0; i < arr.length; i++) {
+			if(i == left) {
+				System.out.print("[");
+			}
+			if(i == pivot) {
+				System.out.print("*");
+			}
+			System.out.print(arr[i]);
+			if(i == right) {
+				System.out.print("] ");
+			}else {
+				System.out.print(" ");
+			}
+		}
+		System.out.println();
+	}
+	
+	void swap(int[] arr, int left, int right) {
+		int tmp = arr[right];
+		arr[right] = arr[left];
+		arr[left] = tmp;
+	}
+	
+	int partition(int[] arr, int low, int high) {
+		int left = low;
+		int right = high -1;
+		
+		int pid = high;
+		int pivot = arr[pid];
+		
+		while(left <= right) {
+			while(left <= high && arr[left] < pivot) {
+				left++;
+			}
+			while(right >= low && arr[right] > pivot) {
+				right--;
+			}
+			
+			if(left <= right) {
+				swap(arr, left, right);
+			}
+		}
+		
+		swap(arr, pid, left);
+		return left;
+	}
+	
+	void quickSort(int[] arr, int low, int high) {
+		if(low < high) {
+			int pivot = partition(arr, low, high);
+			print(arr, low, high, pivot);
+			quickSort(arr, low, pivot -1);
+			quickSort(arr, pivot + 1, high);
+		}
+	}
+	
+	void sort(int arr[]) {
+		quickSort(arr, 0, arr.length -1);
+	}
+	
+    @Bean
+    public Step step() {        
+		return this.stepBuilderFactory.get("step1")
+				.tasklet(new Tasklet() {
+					@Override
+					public RepeatStatus execute(StepContribution contribution,
+							ChunkContext chunkContext) throws Exception {
+
+						System.out.println(" step start ");
+				
+						int[] arr = new int[] {4, 2, 1, 8, 5, 7, 9, 6, 3};
+						
+						if(arr.length > 2) {							
+							print(arr, 0, arr.length - 1,-1);
+							sort(arr);
+							print(arr, 0, arr.length - 1,-1);
+						}	
+						
+						System.out.println(" step end !");
+						return RepeatStatus.FINISHED;
+					}
+
+				}).build();
+    }
+    
+    @Bean
+    public Job job() {
+		return this.jobBuilderFactory.get("job")
+				.start(step())
+				.build();
+    }
+	
+	public static void main(String[] args) {
+		SpringApplication.run(FileCopy2Application.class, args);
+	}
+
+}
